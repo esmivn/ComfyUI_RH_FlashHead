@@ -27,7 +27,7 @@ except ModuleNotFoundError:
 
 try:
     from flash_attn import flash_attn_func as _flash_attn_func
-    FLASH_ATTN_2_AVAILABLE = True
+    FLASH_ATTN_2_AVAILABLE = callable(_flash_attn_func)
 except (ModuleNotFoundError, ImportError):
     _flash_attn_func = None
     FLASH_ATTN_2_AVAILABLE = False
