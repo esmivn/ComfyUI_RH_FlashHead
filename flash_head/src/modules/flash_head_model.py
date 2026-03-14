@@ -26,9 +26,10 @@ except ModuleNotFoundError:
     FLASH_ATTN_3_AVAILABLE = False
 
 try:
-    import flash_attn
+    from flash_attn import flash_attn_func as _flash_attn_func
     FLASH_ATTN_2_AVAILABLE = True
-except ModuleNotFoundError:
+except (ModuleNotFoundError, ImportError):
+    _flash_attn_func = None
     FLASH_ATTN_2_AVAILABLE = False
 
 try:
@@ -61,7 +62,7 @@ def flash_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, num_heads
         q = rearrange(q, "b s (n d) -> b s n d", n=num_heads)
         k = rearrange(k, "b s (n d) -> b s n d", n=num_heads)
         v = rearrange(v, "b s (n d) -> b s n d", n=num_heads)
-        x = flash_attn.flash_attn_func(q, k, v)
+        x = _flash_attn_func(q, k, v)
         x = rearrange(x, "b s n d -> b s (n d)", n=num_heads)
     else:
         q = rearrange(q, "b s (n d) -> b n s d", n=num_heads)
